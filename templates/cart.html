@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8">
+            <h2 class="mb-4">Ваша корзина</h2>
+            
+            {% if not cart_items %}
+            <div class="alert alert-info">
+                Ваша корзина пуста. <a href="{{ url_for('index') }}" class="alert-link">Перейти к покупкам</a>
+            </div>
+            {% else %}
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Товар</th>
+                            <th>Цена</th>
+                            <th>Количество</th>
+                            <th>Сумма</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in cart_items %}
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="bg-secondary text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                                        <i class="fas fa-{{ 'laptop' if item.product.category == 'laptops' else 'desktop' if item.product.category == 'monitors' else 'keyboard' }}"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-0">{{ item.product.name }}</h6>
+                                        <small class="text-muted">{{ item.product.category|title }}</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>${{ "%.2f"|format(item.product.price) }}</td>
+                            <td>{{ item.quantity }}</td>
+                            <td>${{ "%.2f"|format(item.product.price * item.quantity) }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% endif %}
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Итого</h5>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Товары ({{ cart_items|length }})</span>
+                        <span>${{ "%.2f"|format(total) }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-3">
+                        <span>Доставка</span>
+                        <span>Бесплатно</span>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between fw-bold fs-5">
+                        <span>Всего</span>
+                        <span>${{ "%.2f"|format(total) }}</span>
+                    </div>
+                    
+                    {% if cart_items %}
+                    <form method="POST" action="{{ url_for('cart') }}" class="mt-4">
+                        <button type="submit" class="btn btn-primary w-100 btn-lg">Оформить заказ</button>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="mt-3">
+                <a href="{{ url_for('index') }}" class="btn btn-outline-secondary w-100">Продолжить покупки</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
